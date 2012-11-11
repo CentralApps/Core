@@ -11,7 +11,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-		$stub = $this->getMockForAbstractClass('\CentralApps\Core\Collection');
+		$stub = $this->getMockForAbstractClass('\CentralApps\Core\AbstractCollection');
 		$this->_object = $stub;
 	}
     
