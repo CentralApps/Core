@@ -1,7 +1,7 @@
 <?php
 namespace CentralApps\Core;
 
-abstract class KeyedCollection extends Collection {
+abstract class AbstractKeyedCollection extends AbstractCollection {
 	
 	protected $objects;
 	
