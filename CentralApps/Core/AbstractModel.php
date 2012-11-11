@@ -3,6 +3,17 @@ namespace CentralApps\Core;
 
 abstract class AbstractModel {
 	
+	protected $databaseEngine;
+	protected $primaryKeyValue;
+	protected $dependencyInjectionContainer;
+	
+	public function __construct($database_engine, $primary_key_value=null, $dependency_injection_container=null)
+	{
+		$this->databaseEngine = $database_engine;
+		$this->primaryKeyValue = $primary_key_value;
+		$this->dependencyInjectionContainer = $dependency_injection_container;
+	}
+	
 	public function __set($name, $value)
 	{
 		$name = str_replace('_', ' ', $name);
