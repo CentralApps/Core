@@ -16,59 +16,66 @@ class AbstractCollectionTest extends \PHPUnit_Framework_TestCase
 	}
     
     /**
-     * @covers CentralApps\Core\Collection::add
-	 * @covers CentralApps\Core\Collection::count
+     * @covers CentralApps\Core\AbstractCollection::add
      */
     public function testAdd()
     {
-    	$testObject = new \stdClass();
-		$testObject->something = 'Hello';
-		$testObject2 = new \stdClass();
-		$testObject2->something = 'Goodbye';
-    	$this->_object->add( $testObject );
-		$this->_object->add( $testObject2 );
-		$this->assertEquals( 2, $this->_object->count(), 'Two objects added to the collection however count did not equal two' );
+		$class = new \ReflectionClass("\CentralApps\Core\AbstractCollection");
+		$property = $class->getProperty('objects');
+		$property->setAccessible(true);
+		$value = $property->getValue($this->_object);
+		$this->assertEquals(0, count($value), "The collection was not empty by default");
+		$this->_object->add("test");
+		$value = $property->getValue($this->_object);
+		$this->assertEquals(1,count($value), "After adding to the collection, the count was not 1");
   	}
 	
 	/**
-     * @covers CentralApps\Core\Collection::pop
-	 * @covers CentralApps\Core\Collection::add
+     * @covers CentralApps\Core\AbstractCollection::count
      */
-	public function testPop()
+	public function testCount()
 	{
-		$testObject = new \stdClass();
-		$testObject->something = 'Hello';
-		$testObject2 = new \stdClass();
-		$testObject2->something = 'Goodbye';
-    	$this->_object->add( $testObject );
-		$this->_object->add( $testObject2 );
-		
-		$object = $this->_object->pop();
-		$this->assertEquals( 'Goodbye', $object->something, 'Popped object not as expected' );
+		$this->assertEquals(0,count($this->_object), "Empty collection not empty by default");
+		$class = new \ReflectionClass("\CentralApps\Core\AbstractCollection");
+		$property = $class->getProperty('objects');
+		$property->setAccessible(true);
+		$property->setValue($this->_object, array(""));
+		$this->assertEquals(1, count($this->_object), "Adding to the collection didn't increase the count");
 	}
 	
 	/**
-	 * @covers CentralApps\Core\Collection::getIterator
-	 * @covers CentralApps\Core\Collection::add
+     * @covers CentralApps\Core\AbstractCollection::pop
+     */
+	public function testPop()
+	{
+		$class = new \ReflectionClass("\CentralApps\Core\AbstractCollection");
+		$property = $class->getProperty('objects');
+		$property->setAccessible(true);
+		$property->setValue($this->_object, array("a", "b"));
+		$popped = $this->_object->pop();
+		$this->assertTrue(($popped == "b"), "Popped value wasn't as expected");
+	}
+	
+	/**
+	 * @covers CentralApps\Core\AbstractCollection::getIterator
 	 */
 	public function testGetIterator()
 	{
-		$testObject = new \stdClass();
-		$testObject->something = 'Hello';
-		$testObject2 = new \stdClass();
-		$testObject2->something = 'Goodbye';
-    	$this->_object->add( $testObject );
-		$this->_object->add( $testObject2 );
-		
-		$count = 0;
-		foreach( $this->_object as $model )
-		{
-			$count++;
-			$this->assertTrue( get_class( $model ) == 'stdClass', 'Iterator did not return a stdClass which was passed' );
-			$this->assertTrue( $model->something != '', 'Iterate did not return an object with some data set within it');
+		$class = new \ReflectionClass("\CentralApps\Core\AbstractCollection");
+		$property = $class->getProperty('objects');
+		$property->setAccessible(true);
+		$property->setValue($this->_object, array("a", "b"));
+		$foundA = false;
+		$foundB = false;
+		foreach($this->_object as $item) {
+			if( $item == 'a' ) {
+				$foundA = true;
+			} elseif( $item == 'b' ) {
+				$foundB = true;
+			}
 		}
 		
-		$this->assertTrue( $count == $this->_object->count(), 'Iterator count did not match collection count' );
+		$this->assertTrue(($foundA && $foundB), "Didn't iterate and find A and B");
 	}
   	
 }
