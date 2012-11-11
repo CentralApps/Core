@@ -22,7 +22,7 @@ abstract class AbstractCollection implements \Countable, \IteratorAggregate{
 	
 	public function pop()
 	{
-		return $this->objects[0];
+		return $this->objects[count($this->objects)-1];
 	}
 
 }
