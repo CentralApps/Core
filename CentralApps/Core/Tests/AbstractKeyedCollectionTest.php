@@ -46,7 +46,7 @@ class AbstractKeyedCollectionTest extends \PHPUnit_Framework_TestCase
 		$property->setAccessible(true);
 		$property->setValue($this->_object, array("a", "b"));
 		
-		$method = $class->getProperty('getKey');
+		$method = $class->getMethod('getKey');
 		$method->setAccessible(true);
 		$to_add = "";
 		$value = $method->invoke($this->_object, $to_add);
