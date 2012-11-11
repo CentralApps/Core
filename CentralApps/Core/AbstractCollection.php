@@ -1,7 +1,7 @@
 <?php
 namespace CentralApps\Core;
 
-abstract class Collection implements \Countable, \IteratorAggregate{
+abstract class AbstractCollection implements \Countable, \IteratorAggregate{
 	
 	protected $objects = array();
 	

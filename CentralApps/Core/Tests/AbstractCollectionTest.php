@@ -6,7 +6,7 @@ use CentralApps\Core\Collection;
 /**
  * @small
  */
-class CollectionTest extends PHPUnit_Framework_TestCase
+class AbstractCollectionTest extends \PHPUnit_Framework_TestCase
 {
 
 	public function setUp()
