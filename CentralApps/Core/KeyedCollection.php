@@ -1,10 +1,15 @@
 <?php
 namespace CentralApps\Core;
 
-class KeyedCollection extends Collection {
+abstract class KeyedCollection extends Collection {
 	
-	public function add($object, $key)
+	protected $objects;
+	
+	public function add($object, $key=null)
 	{
+		if(is_null($key)) {
+			$key = $this->getKey($object);
+		}
 		$this->objects[$key] = $object;
 	}
 	
@@ -16,6 +21,12 @@ class KeyedCollection extends Collection {
 	public function pop()
 	{
 		throw new \Exception("Can't pop a keyed collection");
+	}
+	
+	protected function getKey($object)
+	{
+		// default, needs overriding when implemented...otherwise its just a restricted collection
+		return count($this->objects);	
 	}
 	
 }
