@@ -78,7 +78,7 @@ class AbstractKeyedCollectionTest extends \PHPUnit_Framework_TestCase
         $property = $class->getProperty('objects');
         $property->setAccessible(true);
         $property->setValue($this->_object, array("a", "b"));
-        $popped = $this->_object->pop();
+        $this->_object->pop();
     }
 
     /**
