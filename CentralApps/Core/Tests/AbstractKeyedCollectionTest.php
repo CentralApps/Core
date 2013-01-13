@@ -32,7 +32,7 @@ class AbstractKeyedCollectionTest extends \PHPUnit_Framework_TestCase
         $this->_object->add('test2', 'some-key');
         $value = $property->getValue($this->_object);
         $this->assertEquals(2, count($value), "After adding a second item with a specific key, the count was not 2");
-        $this->assertEquals('test2', $value['some-key'], "Second item with a specific key was not found in the collection with that key");
+        $this->assertEquals('test2', $value['some-key'], "Second item with a specific key was not found with that key");
       }
 
     /**
