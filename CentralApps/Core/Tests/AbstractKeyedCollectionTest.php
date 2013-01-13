@@ -36,6 +36,19 @@ class AbstractKeyedCollectionTest extends \PHPUnit_Framework_TestCase
       }
 
     /**
+     * @covers CentralApps\Core\AbstractKeyedCollection::get 
+     */
+    public function testGet()
+    {
+        $class = new \ReflectionClass("\CentralApps\Core\AbstractKeyedCollection");
+
+        $property = $class->getProperty('objects');
+        $property->setAccessible(true);
+        $property->setValue($this->_object, array("a" => "b"));
+        $this->assertEquals("b", $this->_object->get("a"), "Value for key not found");
+    }
+
+    /**
      * @covers CentralApps\Core\AbstractKeyedCollection::getKey
      */
     public function testGetKey()
