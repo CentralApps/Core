@@ -27,7 +27,7 @@ class AbstractCollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(0, count($value), "The collection was not empty by default");
         $this->_object->add("test");
         $value = $property->getValue($this->_object);
-        $this->assertEquals(1,count($value), "After adding to the collection, the count was not 1");
+        $this->assertEquals(1, count($value), "After adding to the collection, the count was not 1");
       }
 
     /**
@@ -35,7 +35,7 @@ class AbstractCollectionTest extends \PHPUnit_Framework_TestCase
      */
     public function testCount()
     {
-        $this->assertEquals(0,count($this->_object), "Empty collection not empty by default");
+        $this->assertEquals(0, count($this->_object), "Empty collection not empty by default");
         $class = new \ReflectionClass("\CentralApps\Core\AbstractCollection");
         $property = $class->getProperty('objects');
         $property->setAccessible(true);

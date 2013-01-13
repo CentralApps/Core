@@ -28,11 +28,11 @@ class AbstractKeyedCollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(0, count($value), "The collection was not empty by default");
         $this->_object->add("test");
         $value = $property->getValue($this->_object);
-        $this->assertEquals(1,count($value), "After adding to the collection, the count was not 1");
+        $this->assertEquals(1, count($value), "After adding to the collection, the count was not 1");
         $this->_object->add('test2', 'some-key');
         $value = $property->getValue($this->_object);
-        $this->assertEquals(2,count($value), "After adding a second item with a specific key, the count was not 2");
-        $this->assertEquals('test2', $value['some-key'], "After adding a second item with a specific key, it was not found in the collection with that key");
+        $this->assertEquals(2, count($value), "After adding a second item with a specific key, the count was not 2");
+        $this->assertEquals('test2', $value['some-key'], "Second item with a specific key was not found in the collection with that key");
       }
 
     /**
@@ -58,7 +58,7 @@ class AbstractKeyedCollectionTest extends \PHPUnit_Framework_TestCase
      */
     public function testCount()
     {
-        $this->assertEquals(0,count($this->_object), "Empty collection not empty by default");
+        $this->assertEquals(0, count($this->_object), "Empty collection not empty by default");
         $class = new \ReflectionClass("\CentralApps\Core\AbstractKeyedCollection");
         $property = $class->getProperty('objects');
         $property->setAccessible(true);
