@@ -46,8 +46,8 @@
     <modified />
    </fileset>
 
-   <fileset dir="${basedir}/tests">
-    <include name="**/*.php" />
+   <fileset dir="${basedir}/CentralApps">
+    <include name="**/*Test.php" />
     <modified />
    </fileset>
   </apply>
