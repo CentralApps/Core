@@ -8,7 +8,7 @@ interface DAOInterface
 	 * @param array $container dependency injection container - this is where we will get the database layer from
 	 * @return void
 	 */
-	public function __construct(array $container);
+	public function __construct($container);
 	
 	/**
 	 * Create from unique reference
