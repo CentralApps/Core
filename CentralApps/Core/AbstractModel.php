@@ -76,6 +76,8 @@ abstract class AbstractModel implements ModelInterface, MagicModelInterface
     {
         try {
             $this->dao->save($this);
+            $this->setValid(true);
+            $this->setExistsInDatabase(true);
             return true;
         } catch(\Exception $e) {
             return false;
@@ -87,6 +89,8 @@ abstract class AbstractModel implements ModelInterface, MagicModelInterface
     {
         try {
             $this->dao->delete($this);
+            $this->setValid(false);
+            $this->setExistsInDatabase(false);
             return true;
         } catch(\Exception $e) {
             return false;
