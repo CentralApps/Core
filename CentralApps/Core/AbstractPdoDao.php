@@ -99,11 +99,9 @@ abstract class AbstractPdoDao implements DaoInterface
         $iteratable_fields = (empty($this->fields)) ? $model->getProperties() : $this->fields;
         foreach($model->getProperties() as $field => $value) {
             // Limitation of the PDO DAO I've made
-            foreach($model->getProperties() as $field => $value) {
-                if($field != $this->uniqueReferenceField) {
-                    $fields[] = "`" . $field . "`";
-                    $params[] = ":" . $field;
-                }
+            if($field != $this->uniqueReferenceField) {
+                $fields[] = "`" . $field . "`";
+                $params[] = ":" . $field;
             }
         }
         $fields = implode(',', $fields);
