@@ -10,7 +10,7 @@ abstract class AbstractPdoDao implements DaoInterface
     protected $tableName = '';
     protected $tableAlias = null;
     protected $aliasPrefix = null;
-    protected $uniqueReferenceField = null;
+    protected $uniqueReferenceField = 'id';
     // Type of unique reference field, should be int or string
     protected $uniqueReferenceFieldType = 'int';
     // key => value pairs of field name and PDO data type
@@ -38,10 +38,9 @@ abstract class AbstractPdoDao implements DaoInterface
                 FROM  
                     `{$this->tableName}` 
                 WHERE 
-                    `{$this->uniqueReferenceField}`=:unique_reference_value 
+                    `{$this->uniqueReferenceField}`=:{$this->uniqueReferenceField}
                 LIMIT
                     1";
-        
         $statement = $this->databaseEngine->prepare($sql);
         $statement->bindParam(':' . $this->uniqueReferenceField, $unique_reference, ('int' == $this->uniqueReferenceFieldType) ? \PDO::PARAM_INT : \PDO::PARAM_STR);
         $statement->execute();
@@ -141,17 +140,12 @@ abstract class AbstractPdoDao implements DaoInterface
         // todo: throw exception
         $fields = array();
         $params = array();
-        $iteratable_fields = (empty($this->fields)) ? $model->getProperties() : $this->fields;
-        foreach($iteratable_fields as $field) {
-            $fields[] = "`" . $field . "`";
-            $params[] = ":" . $field;
-        }
-        $fields = implode(',', $fields);
+        $iteratable_fields = $model->getProperties();
         $sql = "UPDATE
                     `{$this->tableName}`
                 SET ";
         $update_fields = array();        
-        foreach($fields as $field) {
+        foreach($iteratable_fields as $field => $value) {
             if($field != $this->uniqueReferenceField) {
                 $update_fields[] = "`" . $field . "`=:" . $field;
             }
@@ -164,8 +158,8 @@ abstract class AbstractPdoDao implements DaoInterface
         $i = 0;
         foreach($iteratable_fields as $field => $type) {
             $value_field = $field . $i;
-            $$$value_field = $model->$field; // needed to prevent some overload issue, guessing its passed to pdo by reference
-            $statement->bindParam(":" . $field, $$$value_field, (isset($this->fields[$field])) ? $this->fields[$field] : \PDO::PARAM_STR );
+            $$value_field = $model->$field; // needed to prevent some overload issue, guessing its passed to pdo by reference
+            $statement->bindParam(":" . $field, $$value_field, (isset($this->fields[$field])) ? $this->fields[$field] : \PDO::PARAM_STR );
         } 
         $statement->execute();
         if(1 != $statement->rowCount()) {

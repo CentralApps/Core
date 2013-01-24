@@ -24,7 +24,7 @@ abstract class AbstractModel implements ModelInterface, MagicModelInterface
             if(!is_null($unique_reference)) {
                 try {
                     $this->dao->createFromUniqueReference($unique_reference, $this);
-                    $this->properties = $this->dao->getProperties();
+                    //$this->properties = $this->dao->getProperties();
                     $this->setValid(true);
                     $this->setExistsInDatabase(true);
                 } catch (\Exception $e) {
@@ -95,17 +95,17 @@ abstract class AbstractModel implements ModelInterface, MagicModelInterface
     
     public function __set($name, $value)
     {
-        $this->properties[$property] = $value;
+        //$this->properties[$property] = $value;
         /**
          * Used if we want to set actual properties, not magic db ones
          * $name = str_replace('_', ' ', $name);
          * $setter = 'set' . str_replace(' ', '', ucwords($name));
          * return $this->$setter($value);
         */
-        $name = str_replace('_', ' ', $name);
-        $name = ucwords($name);
-        $name = str_replace(' ', '', $name);
-        $name = lcfirst($name);
+        $property = str_replace('_', ' ', $name);
+        $property = ucwords($property);
+        $property = str_replace(' ', '', $property);
+        $property = lcfirst($property);
         $this->properties[$property] = $value;
         
     }
