@@ -69,7 +69,11 @@ abstract class AbstractModel implements ModelInterface, MagicModelInterface
     
     public function getProperties()
     {
-        return $this->properties;
+        $properties = array();
+        foreach( $this->properties as $key => $value ) {
+            $properties[$this->propertyToFieldName($key)] = $value;
+        }
+        return $properties;
     }
     
     public function save()
@@ -106,10 +110,7 @@ abstract class AbstractModel implements ModelInterface, MagicModelInterface
          * $setter = 'set' . str_replace(' ', '', ucwords($name));
          * return $this->$setter($value);
         */
-        $property = str_replace('_', ' ', $name);
-        $property = ucwords($property);
-        $property = str_replace(' ', '', $property);
-        $property = lcfirst($property);
+        $property = $this->fieldNameToProperty($name);
         $this->properties[$property] = $value;
         
     }
@@ -124,10 +125,7 @@ abstract class AbstractModel implements ModelInterface, MagicModelInterface
             $getter = 'get' . $name;
             return $this->$getter();
          */
-         $property = str_replace('_', ' ', $name);
-         $property = ucwords($property);
-         $property = str_replace(' ', '', $property);
-         $property = lcfirst($property);
+         $property = $this->fieldNameToProperty($name);
          return $this->properties[$property];
         
     }
@@ -140,7 +138,7 @@ abstract class AbstractModel implements ModelInterface, MagicModelInterface
                 $property = lcfirst(substr($name, 2));
                 $this->$property = $arguments[0];
              */
-             $property = lcfirst(substr($name, 3));
+             $property = $this->methodNameToProperty($name);
              $this->properties[$property] = $arguments[0];
         } elseif (strpos($name, 'get') === 0 && strlen($name) > 3 ) {
             /*
@@ -148,7 +146,7 @@ abstract class AbstractModel implements ModelInterface, MagicModelInterface
              * $property = lcfirst(substr($name, 2));
              * return $this->$property;
              */
-             $property = lcfirst(substr($name, 3));
+            $property = $this->methodNameToProperty($name);
             return isset($this->properties[$property]) ? $this->properties[$property] : null;
         }
     }
@@ -167,6 +165,38 @@ abstract class AbstractModel implements ModelInterface, MagicModelInterface
         $this->$pkf = null;
         $this->valid = false;
         $this->existsInDatabase = false;
+    }
+
+    /**
+     * Convert a field name to a property name
+     * @param String $name the name of the database field e.g. my_database_field
+     * @return String the name of the property e.g. myDatabaseField
+     */
+    protected function fieldNameToProperty( $name )
+    {
+        $property = implode( ( array_map( 'ucfirst', explode( '_', $name ) ) ) );
+        return lcfirst( $property );    
+    }
+
+    /**
+     * Converts a property name into a field name
+     * @param String $property the name of the object property e.g. id, name, someProperty
+     * @return String e.g. id, name, some_property
+     */
+    protected function propertyToFieldName( $property )
+    {
+        return strtolower( preg_replace("/([A-Z])/",'_\\1',$property) );
+    }
+
+    /**
+     * Get the name of an object property from a method name, pased from the __call() method above
+     * @param String $methodName
+     * @return String
+     */
+    protected function methodNameToProperty( $methodName )
+    {
+        return lcfirst( substr( $methodName, 3, strlen( $methodName ) ) );
+
     }
 
 }
