@@ -13,18 +13,20 @@ abstract class AbstractModel implements ModelInterface, MagicModelInterface
     // if the getters and setters are not implemented, the default magic methods will use this array as a bucket
     protected $properties = array();
     
-    public function __construct($container, $unique_reference)
+    public function __construct($container, $unique_reference=null)
     {
         $this->dao = $container['data_access_objects'][$this->daoContainerKey];
         if($this->dao instanceof DAOInterface) {
-            try {
-                $this->dao->createFromUniqueReference($unique_reference, $this);
-                $this->properties = $this->dao->getProperties();
-                $this->setValid(true);
-                $this->setExistsInDatabase(true);
-            } catch (\Exception $e) {
-                $this->existsInDatabase = false;
-                $this->false = false;
+            if(!is_null($unique_reference)) {
+                try {
+                    $this->dao->createFromUniqueReference($unique_reference, $this);
+                    $this->properties = $this->dao->getProperties();
+                    $this->setValid(true);
+                    $this->setExistsInDatabase(true);
+                } catch (\Exception $e) {
+                    $this->existsInDatabase = false;
+                    $this->false = false;
+                }
             }
         } else {
             throw new \RuntimeException("Container injected DAO does not implement DAOInterface");
