@@ -18,10 +18,10 @@ abstract class AbtractPdoDao implements DaoInterface
     
     /**
      * Data Access Object constructor
-     * @param array $container dependency injection container - this is where we will get the database layer from
+     * @param array|ArrayAccess $container dependency injection container - this is where we will get the database layer from
      * @return void
      */
-    public function __construct(array $container)
+    public function __construct($container)
     {
         $this->databaseEngine = $container[$this->databaseEngineReference];
     }
