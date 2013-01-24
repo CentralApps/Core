@@ -18,7 +18,7 @@ abstract class AbstractModel implements ModelInterface, MagicModelInterface
         if(!is_array($container) && ! $container instanceof \ArrayAccess) {
             throw new \InvalidArgumentException("Container should be an array or an object which implements ArrayAccess");
         }
-        
+        $this->container = $container;
         $this->dao = $container['data_access_objects'][$this->daoContainerKey];
         if($this->dao instanceof DAOInterface) {
             if(!is_null($unique_reference)) {
