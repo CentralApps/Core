@@ -8,7 +8,7 @@ interface ModelInterface
 	 * @param array $container a dependency injection container - must be array or implement array access
 	 * @param mixed $unique_reference a unique reference for a single 
 	 */
-	public function __construct(array $container, $unique_reference);
+	public function __construct(array $container, $unique_reference=null);
     
     /**
      * Set the value of the unique reference field (typically PK value)
