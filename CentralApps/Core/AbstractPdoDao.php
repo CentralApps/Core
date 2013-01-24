@@ -104,7 +104,7 @@ abstract class AbstractPdoDao implements DaoInterface
         }
         $fields = implode(',', $fields);
         $sql = "INSERT INTO
-                        `{$this->$tableName}`
+                        `{$this->tableName}`
                     ({$fields})
                     VALUES
                     ({$params})";
@@ -138,7 +138,7 @@ abstract class AbstractPdoDao implements DaoInterface
         }
         $fields = implode(',', $fields);
         $sql = "UPDATE
-                    `{$this->$tableName}`
+                    `{$this->tableName}`
                 SET ";
         $update_fields = array();        
         foreach($fields as $field) {
@@ -170,7 +170,7 @@ abstract class AbstractPdoDao implements DaoInterface
     public function delete(ModelInterface $object)
     {
         $sql = "DELETE FROM
-                    `{$this->$tableName}`
+                    `{$this->tableName}`
                 WHERE
                     `{$this->uniqueReferenceField}`=:unique_reference
                 LIMIT
