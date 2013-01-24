@@ -42,7 +42,7 @@ abstract class AbstractModel implements ModelInterface, MagicModelInterface
         $this->properties[$this->dao->getUniqueReferenceField()] = $value;
     }
     
-    public function getUniqueReferenceFieldValue()
+    public function getUniqueReferenceValue()
     {
         return $this->properties[$this->dao->getUniqueReferenceField()];
     }
