@@ -30,6 +30,7 @@ interface DAOInterface
      * @param object $model
      * @return void
      * @throws OutOfBoundsException
+     * @throws \LogicException
      */
 	public function save($model);
 	
