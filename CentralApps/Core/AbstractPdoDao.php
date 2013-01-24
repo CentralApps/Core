@@ -111,7 +111,8 @@ abstract class AbstractPdoDao implements DaoInterface
         $statement = $this->databaseEngine->prepare($sql);
         foreach($iteratable_fields as $field => $type) {
             if($field != $this->uniqueReferenceField) {
-                $statement->bindParam(":" . $field, $model->$field, (isset($this->fields[$field])) ? $this->fields[$field] : \PDO::PARAM_STR );
+                $value = $model->$field; // needed to prevent some overload issue, guessing its passed to pdo by reference
+                $statement->bindParam(":" . $field, $value, (isset($this->fields[$field])) ? $this->fields[$field] : \PDO::PARAM_STR );
             }
         } 
         $model->setUniqueReferenceFieldValue($this->databaseEngine->lastInsertId());
@@ -152,7 +153,8 @@ abstract class AbstractPdoDao implements DaoInterface
                  LIMIT 1";
         $statement = $this->databaseEngine->prepare($sql);
         foreach($iteratable_fields as $field => $type) {
-            $statement->bindParam(":" . $field, $model->$field, (isset($this->fields[$field])) ? $this->fields[$field] : \PDO::PARAM_STR );
+            $value = $model->$field; // needed to prevent some overload issue, guessing its passed to pdo by reference
+            $statement->bindParam(":" . $field, $value, (isset($this->fields[$field])) ? $this->fields[$field] : \PDO::PARAM_STR );
         } 
         $statement->execute();
         if(1 != $statement->rowCount()) {
