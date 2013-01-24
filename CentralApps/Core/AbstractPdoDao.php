@@ -114,7 +114,8 @@ abstract class AbtractPdoDao implements DaoInterface
         // todo: throw exception
         $fields = array();
         $params = array();
-        foreach($this->fields as $field) {
+        $iteratable_fields = (empty($this->fields)) ? $model->getProperties() : $this->fields;
+        foreach($iteratable_fields as $field) {
             $fields[] = "`" . $field . "`";
             $params[] = ":" . $field;
         }
@@ -125,7 +126,7 @@ abstract class AbtractPdoDao implements DaoInterface
                     VALUES
                     ({$params})";
         $statement = $this->databaseEngine->prepare($sql);
-        foreach($this->fields as $field => $type) {
+        foreach($iteratable_fields as $field => $type) {
             $statement->bindParam(":" . $field, $model->$field, (isset($this->fields[$field])) ? $this->fields[$field] : \PDO::PARAM_STR );
         } 
     }

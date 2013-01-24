@@ -56,6 +56,11 @@ abstract class AbstractModel implements ModelInterface, MagicModelInterface
         return $this->isValid;
     }
     
+    public function getProperties()
+    {
+        return $this->properties;
+    }
+    
     public function save()
     {
         try {

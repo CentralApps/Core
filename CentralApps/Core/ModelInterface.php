@@ -60,4 +60,10 @@ interface ModelInterface
      * @return boolean
      */
     public function delete();
+    
+    /**
+     * Get properties and models from a model (key = field, value = db value)
+     * @return array
+     */
+    public function getProperties();
 }
