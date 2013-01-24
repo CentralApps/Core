@@ -16,6 +16,8 @@ interface ModelInterface
      * @return void
      */
     public function setUniqueReferenceFieldValue($value);
+    
+    public function getUniqueReferenceFieldValue();
 	
 	/**
 	 * Check if the data represented in a model is from the database

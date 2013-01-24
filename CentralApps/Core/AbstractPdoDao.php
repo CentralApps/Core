@@ -98,23 +98,32 @@ abstract class AbstractPdoDao implements DaoInterface
         $fields = array();
         $params = array();
         $iteratable_fields = (empty($this->fields)) ? $model->getProperties() : $this->fields;
-        foreach($iteratable_fields as $field) {
+        foreach($model->getProperties() as $field => $value) {
             $fields[] = "`" . $field . "`";
             $params[] = ":" . $field;
         }
         $fields = implode(',', $fields);
+        $params = implode(',', $params);
         $sql = "INSERT INTO
                         `{$this->tableName}`
                     ({$fields})
                     VALUES
                     ({$params})";
         $statement = $this->databaseEngine->prepare($sql);
+        
+        $i = 0;
         foreach($iteratable_fields as $field => $type) {
             if($field != $this->uniqueReferenceField) {
-                $value = $model->$field; // needed to prevent some overload issue, guessing its passed to pdo by reference
-                $statement->bindParam(":" . $field, $value, (isset($this->fields[$field])) ? $this->fields[$field] : \PDO::PARAM_STR );
+                $value_field = $value . $i;
+                $$value_field = $model->$field; // needed to prevent some overload issue, guessing its passed to pdo by reference
+                $statement->bindParam(":" . $field, $$value_field, (isset($this->fields[$field])) ? $this->fields[$field] : \PDO::PARAM_STR );
+                $i++;
             }
         } 
+        $statement->execute();
+        if(1 != $statement->rowCount()) {
+            throw new \LogicException("Unable to insert into database");
+        }
         $model->setUniqueReferenceFieldValue($this->databaseEngine->lastInsertId());
     }
     
@@ -152,9 +161,11 @@ abstract class AbstractPdoDao implements DaoInterface
                     `{$this->uniqueReferenceField}`=:{$this->uniqueReferenceField}
                  LIMIT 1";
         $statement = $this->databaseEngine->prepare($sql);
+        $i = 0;
         foreach($iteratable_fields as $field => $type) {
-            $value = $model->$field; // needed to prevent some overload issue, guessing its passed to pdo by reference
-            $statement->bindParam(":" . $field, $value, (isset($this->fields[$field])) ? $this->fields[$field] : \PDO::PARAM_STR );
+            $value_field = $field . $i;
+            $$$value_field = $model->$field; // needed to prevent some overload issue, guessing its passed to pdo by reference
+            $statement->bindParam(":" . $field, $$$value_field, (isset($this->fields[$field])) ? $this->fields[$field] : \PDO::PARAM_STR );
         } 
         $statement->execute();
         if(1 != $statement->rowCount()) {
