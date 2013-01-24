@@ -95,9 +95,26 @@ abstract class AbstractPdoDao implements DaoInterface
         // todo: complete implementation
         // todo: catch exception
         // todo: throw exception
-        if($field != $this->uniqueReferenceField) {
+        $fields = array();
+        $params = array();
+        $iteratable_fields = (empty($this->fields)) ? $model->getProperties() : $this->fields;
+        foreach($iteratable_fields as $field) {
+            $fields[] = "`" . $field . "`";
+            $params[] = ":" . $field;
+        }
+        $fields = implode(',', $fields);
+        $sql = "INSERT INTO
+                        `{$this->$tableName}`
+                    ({$fields})
+                    VALUES
+                    ({$params})";
+        $statement = $this->databaseEngine->prepare($sql);
+        foreach($iteratable_fields as $field => $type) {
+            if($field != $this->uniqueReferenceField) {
                 $statement->bindParam(":" . $field, $model->$field, (isset($this->fields[$field])) ? $this->fields[$field] : \PDO::PARAM_STR );
             }
+        } 
+        $model->setUniqueReferenceFieldValue($this->databaseEngine->lastInsertId());
     }
     
     /**
@@ -120,15 +137,28 @@ abstract class AbstractPdoDao implements DaoInterface
             $params[] = ":" . $field;
         }
         $fields = implode(',', $fields);
-        $sql = "INSERT INTO
-                        `{$this->$tableName}`
-                    ({$fields})
-                    VALUES
-                    ({$params})";
+        $sql = "UPDATE
+                    `{$this->$tableName}`
+                SET ";
+        $update_fields = array();        
+        foreach($fields as $field) {
+            if($field != $this->uniqueReferenceField) {
+                $update_fields[] = "`" . $field . "`=:" . $field;
+            }
+        }
+        $sql .= implode(',', $update_fields);
+        $sql .= " WHERE
+                    `{$this->uniqueReferenceField}`=:{$this->uniqueReferenceField}
+                 LIMIT 1";
         $statement = $this->databaseEngine->prepare($sql);
         foreach($iteratable_fields as $field => $type) {
             $statement->bindParam(":" . $field, $model->$field, (isset($this->fields[$field])) ? $this->fields[$field] : \PDO::PARAM_STR );
         } 
+        $statement->execute();
+        if(1 != $statement->rowCount()) {
+            throw new \OutOfBoundsException("Record not found in the database");
+        }
+        
     }
     
     /**

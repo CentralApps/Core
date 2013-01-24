@@ -97,12 +97,16 @@ abstract class AbstractModel implements ModelInterface, MagicModelInterface
          * $setter = 'set' . str_replace(' ', '', ucwords($name));
          * return $this->$setter($value);
         */
+        $name = str_replace('_', ' ', $name);
+        $name = ucwords($name);
+        $name = str_replace(' ', '', $name);
+        $name = lcfirst($name);
+        $this->properties[$property] = $value;
         
     }
     
     public function __get($name)
     {
-        return $this->properties[$property];
         /**
          * Getter for if we want to get actual properties and not magic db ones
          * $name = str_replace('_', ' ', $name);
@@ -111,6 +115,11 @@ abstract class AbstractModel implements ModelInterface, MagicModelInterface
             $getter = 'get' . $name;
             return $this->$getter();
          */
+         $name = str_replace('_', ' ', $name);
+         $name = ucwords($name);
+         $name = str_replace(' ', '', $name);
+         $name = lcfirst($name);
+         return $this->properties[$property];
         
     }
 
@@ -122,6 +131,7 @@ abstract class AbstractModel implements ModelInterface, MagicModelInterface
                 $property = lcfirst(substr($name, 2));
                 $this->$property = $arguments[0];
              */
+             $property = lcfirst(substr($name, 2));
              $this->properties[$property] = $arguments[0];
         } elseif (strpos($name, 'get') === 0 && strlen($name) > 3 ) {
             /*
@@ -129,6 +139,7 @@ abstract class AbstractModel implements ModelInterface, MagicModelInterface
              * $property = lcfirst(substr($name, 2));
              * return $this->$property;
              */
+             $property = lcfirst(substr($name, 2));
             return isset($this->properties[$property]) ? $this->properties[$property] : null;
         }
     }
