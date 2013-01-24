@@ -1,7 +1,7 @@
 <?php
 namespace CentralApps\Core;
 
-abstract class AbtractPdoDao implements DaoInterface
+abstract class AbstractPdoDao implements DaoInterface
 {
     // todo: see if array is a suitable type hint (does pimple / array access work, or does array implement arrayaccess instead)
     // key to access the database engine from the container
