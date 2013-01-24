@@ -15,7 +15,7 @@ interface DAOInterface
 	 * @param mixed $unique_reference a unique reference such as a primary key to get data for
 	 * @param object $model Optional parameter of the model to use, if null method will have to populate
 	 */
-	public function createFromUniqueReference($unique_reference, $model=null);
+	public function createFromUniqueReference($unique_reference, ModelInterface $model=null);
 	
 	/**
 	 * Creates a collection of models based of a named query and some db parameters
@@ -32,7 +32,7 @@ interface DAOInterface
      * @throws OutOfBoundsException
      * @throws \LogicException
      */
-	public function save($model);
+	public function save(ModelInterface $model);
 	
     /**
      * Delete a model from the database
@@ -40,7 +40,7 @@ interface DAOInterface
      * @return void
      * @throws \OutOfBoundsException
      */
-	public function delete($object);
+	public function delete(ModelInterface $object);
 	
     /**
      * Save multiple records in the database in one go
@@ -48,7 +48,7 @@ interface DAOInterface
      * @return void
      * @throws \OutOfBoundsException
      */
-	public function saveMany(array $collection);
+	public function saveMany($collection);
     
     /**
      * Get properties for a model from database fields

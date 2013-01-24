@@ -155,12 +155,12 @@ abstract class AbtractPdoDao implements DaoInterface
     
     /**
      * Save and update a collection of models in the database
-     * @param array $collection
+     * @param array|ArrayAccess $collection
      * @return void
      * @throws \OutOfBoundsException
      * @throws \LogicException
      */
-    public function saveMany(array $collection)
+    public function saveMany($collection)
     {
         $bulk_inserts = array();
         $bulk_updates = array();
