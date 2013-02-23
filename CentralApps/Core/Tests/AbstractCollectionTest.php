@@ -15,9 +15,6 @@ class AbstractCollectionTest extends \PHPUnit_Framework_TestCase
         $this->_object = $stub;
     }
 
-    /**
-     * @covers CentralApps\Core\AbstractCollection::add
-     */
     public function testAdd()
     {
         $class = new \ReflectionClass("\CentralApps\Core\AbstractCollection");
@@ -30,9 +27,6 @@ class AbstractCollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, count($value), "After adding to the collection, the count was not 1");
       }
 
-    /**
-     * @covers CentralApps\Core\AbstractCollection::count
-     */
     public function testCount()
     {
         $this->assertEquals(0, count($this->_object), "Empty collection not empty by default");
@@ -43,9 +37,6 @@ class AbstractCollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, count($this->_object), "Adding to the collection didn't increase the count");
     }
 
-    /**
-     * @covers CentralApps\Core\AbstractCollection::pop
-     */
     public function testPop()
     {
         $class = new \ReflectionClass("\CentralApps\Core\AbstractCollection");
@@ -56,9 +47,6 @@ class AbstractCollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(($popped == "b"), "Popped value wasn't as expected");
     }
 
-    /**
-     * @covers CentralApps\Core\AbstractCollection::getIterator
-     */
     public function testGetIterator()
     {
         $class = new \ReflectionClass("\CentralApps\Core\AbstractCollection");
