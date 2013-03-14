@@ -48,7 +48,7 @@ abstract class AbstractPdoDao implements DaoInterface
             $statement->setFetchMode(\PDO::FETCH_INTO, $model);
             $statement->fetch();
         } else {
-            throw new \OutOfBoundsException("Record in table '{$this->table}' with reference of '{$unique_reference}' was not found in the database");
+            throw new \OutOfBoundsException("Record in table '{$this->tableName}' with reference of '{$unique_reference}' was not found in the database");
         }
         return $model;
     }
