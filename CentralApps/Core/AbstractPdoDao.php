@@ -15,58 +15,59 @@ abstract class AbstractPdoDao implements DaoInterface
     protected $uniqueReferenceFieldType = 'int';
     // key => value pairs of field name and PDO data type
     protected $fields = array();
-    
+
     /**
      * Data Access Object constructor
-     * @param array|ArrayAccess $container dependency injection container - this is where we will get the database layer from
+     * @param  array|ArrayAccess $container dependency injection container - this is where we will get the database layer from
      * @return void
      */
     public function __construct($container)
     {
         $this->databaseEngine = $container[$this->databaseEngineReference];
     }
-    
+
     /**
      * Create from unique reference
-     * @param mixed $unique_reference a unique reference such as a primary key to get data for
-     * @param object $model Optional parameter of the model to use, if null method will have to populate
+     * @param mixed  $unique_reference a unique reference such as a primary key to get data for
+     * @param object $model            Optional parameter of the model to use, if null method will have to populate
      */
-    public function createFromUniqueReference($unique_reference, ModelInterface $model=null)
+    public function createFromUniqueReference($unique_reference, ModelInterface $model = null)
     {
-        $sql = "SELECT 
+        $sql = "SELECT
                     *
-                FROM  
-                    `{$this->tableName}` 
-                WHERE 
+                FROM
+                    `{$this->tableName}`
+                WHERE
                     `{$this->uniqueReferenceField}`=:{$this->uniqueReferenceField}
                 LIMIT
                     1";
         $statement = $this->databaseEngine->prepare($sql);
         $statement->bindParam(':' . $this->uniqueReferenceField, $unique_reference, ('int' == $this->uniqueReferenceFieldType) ? \PDO::PARAM_INT : \PDO::PARAM_STR);
         $statement->execute();
-        if(1 == $statement->rowCount()) {
+        if (1 == $statement->rowCount()) {
             $statement->setFetchMode(\PDO::FETCH_INTO, $model);
             $statement->fetch();
         } else {
             throw new \OutOfBoundsException("Record in table '{$this->tableName}' with reference of '{$unique_reference}' was not found in the database");
         }
+
         return $model;
     }
-    
+
     /**
      * Creates a collection of models based of a named query and some db parameters
-     * @param string $named_query the reference of the query (should relate to a private method within DAO class)
-     * @param array $parameters query parameters to be passed to the named query method
-     * @param IteratorAggregate $collection Optional pre-existing collection for these models to go into
+     * @param string            $named_query the reference of the query (should relate to a private method within DAO class)
+     * @param array             $parameters  query parameters to be passed to the named query method
+     * @param IteratorAggregate $collection  Optional pre-existing collection for these models to go into
      */
-    public function createCollectionFromNamedQuery($named_query, array $paramaters=array(), \IteratorAggregate $collection=null)
+    public function createCollectionFromNamedQuery($named_query, array $paramaters = array(), \IteratorAggregate $collection = null)
     {
         throw new \LogicException("The createCollectionFromNamedQuery must be implemented if you want to use it for a specific model");
     }
-    
+
     /**
      * Save the model in the database
-     * @param ModelInterface $model
+     * @param  ModelInterface        $model
      * @return void
      * @throws \OutOfBoundsException
      * @throws \LogicException
@@ -76,16 +77,16 @@ abstract class AbstractPdoDao implements DaoInterface
         // todo: complete implementation
         // todo: catch exception
         // todo: throw exception
-        if($model->existsInDatabase()) {
+        if ($model->existsInDatabase()) {
             $this->update($model);
         } else {
             $this->insert($model);
         }
     }
-    
+
     /**
      * Insert the model data in the database
-     * @param ModelInterface $model
+     * @param  ModelInterface  $model
      * @return void
      * @throws \LogicException
      */
@@ -97,9 +98,9 @@ abstract class AbstractPdoDao implements DaoInterface
         $fields = array();
         $params = array();
         $iteratable_fields = (empty($this->fields)) ? $model->getProperties() : $this->fields;
-        foreach($model->getProperties() as $field => $value) {
+        foreach ($model->getProperties() as $field => $value) {
             // Limitation of the PDO DAO I've made
-            if($field != $this->uniqueReferenceField) {
+            if ($field != $this->uniqueReferenceField) {
                 $fields[] = "`" . $field . "`";
                 $params[] = ":" . $field;
             }
@@ -112,26 +113,26 @@ abstract class AbstractPdoDao implements DaoInterface
                     VALUES
                     ({$params})";
         $statement = $this->databaseEngine->prepare($sql);
-        
+
         $i = 0;
-        foreach($iteratable_fields as $field => $type) {
-            if($field != $this->uniqueReferenceField) {
+        foreach ($iteratable_fields as $field => $type) {
+            if ($field != $this->uniqueReferenceField) {
                 $value_field = $value . $i;
                 $$value_field = $model->$field; // needed to prevent some overload issue, guessing its passed to pdo by reference
                 $statement->bindParam(":" . $field, $$value_field, (isset($this->fields[$field])) ? $this->fields[$field] : \PDO::PARAM_STR );
                 $i++;
             }
-        } 
+        }
         $statement->execute();
-        if(1 != $statement->rowCount()) {
+        if (1 != $statement->rowCount()) {
             throw new \LogicException("Unable to insert into database");
         }
         $model->setUniqueReferenceFieldValue($this->databaseEngine->lastInsertId());
     }
-    
+
     /**
      * Update the model data in the database
-     * @param ModelInterface $model
+     * @param  ModelInterface        $model
      * @return void
      * @throws \OutOfBoundsException
      */
@@ -147,9 +148,9 @@ abstract class AbstractPdoDao implements DaoInterface
         $sql = "UPDATE
                     `{$this->tableName}`
                 SET ";
-        $update_fields = array();        
-        foreach($iteratable_fields as $field => $value) {
-            if($field != $this->uniqueReferenceField) {
+        $update_fields = array();
+        foreach ($iteratable_fields as $field => $value) {
+            if ($field != $this->uniqueReferenceField) {
                 $update_fields[] = "`" . $field . "`=:" . $field;
             }
         }
@@ -159,21 +160,20 @@ abstract class AbstractPdoDao implements DaoInterface
                  LIMIT 1";
         $statement = $this->databaseEngine->prepare($sql);
         $i = 0;
-        foreach($iteratable_fields as $field => $type) {
+        foreach ($iteratable_fields as $field => $type) {
             $value_field = $field . $i;
             $$value_field = $model->$field; // needed to prevent some overload issue, guessing its passed to pdo by reference
-            $statement->bindParam(":" . $field, $$value_field, (isset($this->fields[$field])) ? $this->fields[$field] : \PDO::PARAM_STR );
-        } 
+            $statement->bindParam(":" . $field, $$value_field, (isset($this->fields[$field])) ? $this->fields[$field] : \PDO::PARAM_STR);
+        }
         $statement->execute();
-        if(1 != $statement->rowCount()) {
+        if (1 != $statement->rowCount()) {
             throw new \OutOfBoundsException("Record not found in the database");
         }
-        
     }
-    
+
     /**
      * Delete the model from the database
-     * @param ModelInterface $model
+     * @param  ModelInterface        $model
      * @return void
      * @throws \OutOfBoundsException
      */
@@ -189,14 +189,14 @@ abstract class AbstractPdoDao implements DaoInterface
         $statement->bindParam(':unique_reference', $object->getUniqueReferenceValue(), ('int' == $this->uniqueReferenceFieldType) ? \PDO::PARAM_INT : \PDO::PARAM_STR);
         $statement->execute();
 
-        if(1 == $statement->rowCount()) {
+        if (1 == $statement->rowCount()) {
             throw new \OutOfBoundsException("Record in table '{$this->tableName}' with reference of '{$object->getUniqueReferenceValue()}' was not found in the database when deleting");
         }
     }
-    
+
     /**
      * Save and update a collection of models in the database
-     * @param array|ArrayAccess $collection
+     * @param  array|ArrayAccess     $collection
      * @return void
      * @throws \OutOfBoundsException
      * @throws \LogicException
@@ -205,8 +205,8 @@ abstract class AbstractPdoDao implements DaoInterface
     {
         $bulk_inserts = array();
         $bulk_updates = array();
-        foreach($collection as $model) {
-            if($model->existsInDatabase()) {
+        foreach ($collection as $model) {
+            if ($model->existsInDatabase()) {
                 $bulk_updates[] = $model;
             } else {
                 $bulk_inserts[] = $model;
@@ -215,10 +215,10 @@ abstract class AbstractPdoDao implements DaoInterface
         $this->bulkUpdate($bulk_updates);
         $this->bulkInsert($bulk_inserts);
     }
-    
+
     /**
      * SUpdate a collection of models in the database
-     * @param array $collection
+     * @param  array                 $collection
      * @return void
      * @throws \OutOfBoundsException
      */
@@ -226,10 +226,10 @@ abstract class AbstractPdoDao implements DaoInterface
     {
         // todo: implement
     }
-    
+
     /**
      * Insert a collection of models in the database
-     * @param array $collection
+     * @param  array           $collection
      * @return void
      * @throws \LogicException
      */
@@ -237,7 +237,7 @@ abstract class AbstractPdoDao implements DaoInterface
     {
         // todo: implement
     }
-    
+
     /**
      * Get the field used as unique reference in the database, typically PK
      * @return string
@@ -246,7 +246,7 @@ abstract class AbstractPdoDao implements DaoInterface
     {
         return $this->uniqueReferenceField;
     }
-    
+
     /**
      * Get properties for a model from database fields
      * @return array

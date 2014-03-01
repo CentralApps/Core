@@ -5,7 +5,7 @@ abstract class AbstractKeyedCollection extends AbstractCollection
 {
     protected $objects;
 
-    public function add($object, $key=null)
+    public function add($object, $key = null)
     {
         if (is_null($key)) {
             $key = $this->getKey($object);
@@ -37,5 +37,4 @@ abstract class AbstractKeyedCollection extends AbstractCollection
 
         return $temp;
     }
-
 }
