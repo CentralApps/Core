@@ -24,5 +24,4 @@ abstract class AbstractCollection implements \Countable, \IteratorAggregate
     {
         return $this->objects[count($this->objects)-1];
     }
-
 }

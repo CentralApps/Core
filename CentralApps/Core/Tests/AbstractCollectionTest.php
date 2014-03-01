@@ -8,7 +8,6 @@ use CentralApps\Core\Collection;
  */
 class AbstractCollectionTest extends \PHPUnit_Framework_TestCase
 {
-
     public function setUp()
     {
         $stub = $this->getMockForAbstractClass('\CentralApps\Core\AbstractCollection');
@@ -65,5 +64,4 @@ class AbstractCollectionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue(($foundA && $foundB), "Didn't iterate and find A and B");
     }
-
 }
